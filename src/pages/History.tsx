@@ -1,22 +1,23 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import dynamic from "next/dynamic"
 import Link from "next/link"
 import { useAuth } from "../context/AuthContext"
 import { Package, Calendar, ArrowLeft } from "lucide-react"
 
-export default function History() {
+function History() {
   const { user, purchases } = useAuth()
   const [mounted, setMounted] = useState(false)
+  const [isClient, setIsClient] = useState(false)
 
-  // Esperar a que el componente esté montado en el cliente
   useEffect(() => {
     setMounted(true)
+    setIsClient(typeof window !== 'undefined')
   }, [])
 
   const handleExportPDF = (purchase: (typeof purchases)[0]) => {
-    // Verificar que estamos en el navegador
-    if (typeof window === 'undefined') return
+    if (!isClient || typeof window === 'undefined') return
     
     const printWindow = window.open("", "_blank")
     if (!printWindow) return
@@ -77,7 +78,6 @@ export default function History() {
     printWindow.print()
   }
 
-  // Mostrar un loader mientras se monta el componente
   if (!mounted) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-16 text-center">
@@ -159,14 +159,16 @@ export default function History() {
                   </div>
                 ))}
               </div>
-              <div className="mt-4 pt-4 border-t border-border flex justify-end">
-                <button
-                  onClick={() => handleExportPDF(purchase)}
-                  className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors"
-                >
-                  Exportar Ticket PDF
-                </button>
-              </div>
+              {isClient && (
+                <div className="mt-4 pt-4 border-t border-border flex justify-end">
+                  <button
+                    onClick={() => handleExportPDF(purchase)}
+                    className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors"
+                  >
+                    Exportar Ticket PDF
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ))}
@@ -174,3 +176,8 @@ export default function History() {
     </div>
   )
 }
+
+// Exportar con dynamic para deshabilitar SSR completamente
+export default dynamic(() => Promise.resolve(History), {
+  ssr: false
+})
