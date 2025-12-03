@@ -1,6 +1,6 @@
 "use client"
 
-import { Link } from "react-router-dom"
+import Link from "next/link"
 import { useAuth } from "../context/AuthContext"
 import { Package, Calendar, ArrowLeft } from "lucide-react"
 
@@ -74,7 +74,7 @@ export default function History() {
         <h1 className="text-2xl font-bold text-foreground mb-2">Inicia sesión para ver tu historial</h1>
         <p className="text-muted-foreground mb-6">Necesitas una cuenta para ver tus compras</p>
         <Link
-          to="/login"
+          href="/login"
           className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-lg font-medium hover:bg-primary/90 transition-colors"
         >
           Iniciar sesión
@@ -90,7 +90,7 @@ export default function History() {
         <h1 className="text-2xl font-bold text-foreground mb-2">Sin compras aún</h1>
         <p className="text-muted-foreground mb-6">Aún no has realizado ninguna compra</p>
         <Link
-          to="/"
+          href="/"
           className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-lg font-medium hover:bg-primary/90 transition-colors"
         >
           <ArrowLeft className="h-5 w-5" />
