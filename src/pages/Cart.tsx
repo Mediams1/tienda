@@ -1,6 +1,6 @@
 "use client"
 
-import { Link } from "react-router-dom"
+import Link from "next/link"  // ← Cambio aquí
 import { useCart } from "../context/CartContext"
 import { useAuth } from "../context/AuthContext"
 import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, AlertCircle } from "lucide-react"
@@ -142,7 +142,7 @@ export default function Cart() {
               Exportar a PDF
             </button>
             <Link
-              to="/"
+              href="/"
               className="flex-1 bg-muted text-foreground py-3 rounded-lg font-medium hover:bg-muted/80 transition-colors text-center"
             >
               Seguir comprando
@@ -160,7 +160,7 @@ export default function Cart() {
         <h1 className="text-2xl font-bold text-foreground mb-2">Tu carrito está vacío</h1>
         <p className="text-muted-foreground mb-6">Agrega algunos productos para comenzar</p>
         <Link
-          to="/"
+          href="/"
           className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-lg font-medium hover:bg-primary/90 transition-colors"
         >
           <ArrowLeft className="h-5 w-5" />
@@ -179,11 +179,11 @@ export default function Cart() {
           <AlertCircle className="h-6 w-6 text-destructive flex-shrink-0" />
           <div>
             <p className="text-destructive font-medium">Debes iniciar sesión para realizar la compra</p>
-            <Link to="/login" className="text-primary hover:underline text-sm">
+            <Link href="/login" className="text-primary hover:underline text-sm">
               Iniciar sesión
             </Link>
             {" o "}
-            <Link to="/register" className="text-primary hover:underline text-sm">
+            <Link href="/register" className="text-primary hover:underline text-sm">
               Crear cuenta
             </Link>
           </div>
@@ -257,7 +257,7 @@ export default function Cart() {
               Finalizar Compra
             </button>
             <Link
-              to="/"
+              href="/"
               className="block text-center mt-3 text-muted-foreground hover:text-foreground transition-colors"
             >
               Seguir comprando
