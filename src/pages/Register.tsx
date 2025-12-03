@@ -1,6 +1,5 @@
 "use client"
 
-import type React from "react"
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -38,23 +37,29 @@ export default function Register() {
 
     setIsLoading(true)
 
-    const success = await register(name, email, password)
+    try {
+      const success = await register(name, email, password)
 
-    if (success) {
-      router.push("/")
-    } else {
-      setError("Ya existe una cuenta con este email")
+      if (success) {
+        router.push("/")
+      } else {
+        setError("Ya existe una cuenta con este email")
+      }
+    } catch (err) {
+      setError("Ocurrió un error al crear la cuenta")
+    } finally {
+      setIsLoading(false)
     }
-    setIsLoading(false)
   }
 
+  // Loading state mientras el componente se monta
   if (!mounted) {
     return (
       <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-8">
         <div className="w-full max-w-md">
           <div className="bg-card border border-border rounded-lg p-8 animate-pulse">
-            <div className="h-8 bg-muted rounded mb-2"></div>
-            <div className="h-4 bg-muted rounded w-2/3 mx-auto mb-6"></div>
+            <div className="h-8 bg-muted rounded mb-2 w-3/4 mx-auto"></div>
+            <div className="h-4 bg-muted rounded w-1/2 mx-auto mb-6"></div>
             <div className="space-y-4">
               <div className="h-12 bg-muted rounded"></div>
               <div className="h-12 bg-muted rounded"></div>
@@ -77,7 +82,7 @@ export default function Register() {
 
           {error && (
             <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg flex items-center gap-2 text-destructive">
-              <AlertCircle className="h-5 w-5" />
+              <AlertCircle className="h-5 w-5 flex-shrink-0" />
               <span className="text-sm">{error}</span>
             </div>
           )}
@@ -95,7 +100,8 @@ export default function Register() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
-                  className="w-full pl-10 pr-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground"
+                  disabled={isLoading}
+                  className="w-full pl-10 pr-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground disabled:opacity-50"
                   placeholder="Juan Pérez"
                 />
               </div>
@@ -113,7 +119,8 @@ export default function Register() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full pl-10 pr-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground"
+                  disabled={isLoading}
+                  className="w-full pl-10 pr-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground disabled:opacity-50"
                   placeholder="tu@email.com"
                 />
               </div>
@@ -131,8 +138,10 @@ export default function Register() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full pl-10 pr-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground"
+                  disabled={isLoading}
+                  className="w-full pl-10 pr-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground disabled:opacity-50"
                   placeholder="••••••••"
+                  minLength={6}
                 />
               </div>
             </div>
@@ -149,8 +158,10 @@ export default function Register() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  className="w-full pl-10 pr-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground"
+                  disabled={isLoading}
+                  className="w-full pl-10 pr-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground disabled:opacity-50"
                   placeholder="••••••••"
+                  minLength={6}
                 />
               </div>
             </div>
