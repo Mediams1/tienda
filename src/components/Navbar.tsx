@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useAuth } from "../context/AuthContext"
 import { useCart } from "../context/CartContext"
 import { ShoppingCart, User, LogOut, History, Menu, X } from "lucide-react"
@@ -9,12 +10,12 @@ import { ShoppingCart, User, LogOut, History, Menu, X } from "lucide-react"
 export function Navbar() {
   const { user, logout } = useAuth()
   const { itemCount } = useCart()
-  const navigate = useNavigate()
+  const router = useRouter()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const handleLogout = () => {
     logout()
-    navigate("/")
+    router.push("/")
     setIsMenuOpen(false)
   }
 
@@ -22,21 +23,21 @@ export function Navbar() {
     <nav className="bg-background border-b border-border sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
-          <Link to="/" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2">
             <ShoppingCart className="h-8 w-8 text-primary" />
             <span className="font-bold text-xl text-foreground">TechStore</span>
           </Link>
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-6">
-            <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">
+            <Link href="/" className="text-muted-foreground hover:text-foreground transition-colors">
               Productos
             </Link>
 
             {user ? (
               <>
                 <Link
-                  to="/history"
+                  href="/history"
                   className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
                 >
                   <History className="h-4 w-4" />
@@ -56,11 +57,11 @@ export function Navbar() {
               </>
             ) : (
               <>
-                <Link to="/login" className="text-muted-foreground hover:text-foreground transition-colors">
+                <Link href="/login" className="text-muted-foreground hover:text-foreground transition-colors">
                   Iniciar Sesión
                 </Link>
                 <Link
-                  to="/register"
+                  href="/register"
                   className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors"
                 >
                   Registrarse
@@ -68,7 +69,7 @@ export function Navbar() {
               </>
             )}
 
-            <Link to="/cart" className="relative">
+            <Link href="/cart" className="relative">
               <ShoppingCart className="h-6 w-6 text-foreground" />
               {itemCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
@@ -80,7 +81,7 @@ export function Navbar() {
 
           {/* Mobile Menu Button */}
           <div className="flex md:hidden items-center gap-4">
-            <Link to="/cart" className="relative">
+            <Link href="/cart" className="relative">
               <ShoppingCart className="h-6 w-6 text-foreground" />
               {itemCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
@@ -99,7 +100,7 @@ export function Navbar() {
           <div className="md:hidden py-4 border-t border-border">
             <div className="flex flex-col gap-4">
               <Link
-                to="/"
+                href="/"
                 onClick={() => setIsMenuOpen(false)}
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
@@ -109,7 +110,7 @@ export function Navbar() {
               {user ? (
                 <>
                   <Link
-                    to="/history"
+                    href="/history"
                     onClick={() => setIsMenuOpen(false)}
                     className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
                   >
@@ -131,14 +132,14 @@ export function Navbar() {
               ) : (
                 <>
                   <Link
-                    to="/login"
+                    href="/login"
                     onClick={() => setIsMenuOpen(false)}
                     className="text-muted-foreground hover:text-foreground transition-colors"
                   >
                     Iniciar Sesión
                   </Link>
                   <Link
-                    to="/register"
+                    href="/register"
                     onClick={() => setIsMenuOpen(false)}
                     className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors text-center"
                   >
