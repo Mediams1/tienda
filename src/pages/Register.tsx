@@ -2,7 +2,8 @@
 
 import type React from "react"
 import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useAuth } from "../context/AuthContext"
 import { Mail, Lock, User, AlertCircle } from "lucide-react"
 
@@ -14,7 +15,7 @@ export default function Register() {
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const { register } = useAuth()
-  const navigate = useNavigate()
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -35,7 +36,7 @@ export default function Register() {
     const success = await register(name, email, password)
 
     if (success) {
-      navigate("/")
+      router.push("/")
     } else {
       setError("Ya existe una cuenta con este email")
     }
@@ -140,7 +141,7 @@ export default function Register() {
 
           <p className="mt-6 text-center text-muted-foreground">
             ¿Ya tienes una cuenta?{" "}
-            <Link to="/login" className="text-primary hover:underline">
+            <Link href="/login" className="text-primary hover:underline">
               Inicia sesión
             </Link>
           </p>
