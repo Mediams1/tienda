@@ -2,7 +2,8 @@
 
 import type React from "react"
 import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useAuth } from "../context/AuthContext"
 import { Mail, Lock, AlertCircle } from "lucide-react"
 
@@ -12,7 +13,7 @@ export default function Login() {
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const { login } = useAuth()
-  const navigate = useNavigate()
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -22,7 +23,7 @@ export default function Login() {
     const success = await login(email, password)
 
     if (success) {
-      navigate("/")
+      router.push("/")
     } else {
       setError("Credenciales incorrectas. Verifica tu email y contraseña.")
     }
@@ -91,7 +92,7 @@ export default function Login() {
 
           <p className="mt-6 text-center text-muted-foreground">
             ¿No tienes una cuenta?{" "}
-            <Link to="/register" className="text-primary hover:underline">
+            <Link href="/register" className="text-primary hover:underline">
               Regístrate
             </Link>
           </p>
