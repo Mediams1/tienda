@@ -1,13 +1,30 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import dynamic from "next/dynamic"
 import { products } from "../data/products"
-import { ProductCard } from "../components/ProductCard"
 import { Search } from "lucide-react"
+
+// Importar ProductCard sin SSR
+const ProductCard = dynamic(() => import("../components/ProductCard").then(mod => ({ default: mod.ProductCard })), {
+  ssr: false,
+  loading: () => (
+    <div className="bg-card border border-border rounded-lg p-4 animate-pulse">
+      <div className="aspect-square bg-muted rounded-lg mb-4"></div>
+      <div className="h-4 bg-muted rounded mb-2"></div>
+      <div className="h-3 bg-muted rounded w-2/3"></div>
+    </div>
+  )
+})
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("Todos")
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const categories = ["Todos", ...new Set(products.map((p) => p.category))]
 
@@ -56,13 +73,25 @@ export default function Home() {
       </div>
 
       {/* Products Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {filteredProducts.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
-      </div>
+      {mounted ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredProducts.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {Array(8).fill(0).map((_, i) => (
+            <div key={i} className="bg-card border border-border rounded-lg p-4 animate-pulse">
+              <div className="aspect-square bg-muted rounded-lg mb-4"></div>
+              <div className="h-4 bg-muted rounded mb-2"></div>
+              <div className="h-3 bg-muted rounded w-2/3"></div>
+            </div>
+          ))}
+        </div>
+      )}
 
-      {filteredProducts.length === 0 && (
+      {mounted && filteredProducts.length === 0 && (
         <div className="text-center py-12">
           <p className="text-muted-foreground text-lg">No se encontraron productos</p>
         </div>
