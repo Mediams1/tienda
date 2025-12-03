@@ -1,3 +1,5 @@
+"use client"
+
 import { Link } from "react-router-dom"
 import { useCart } from "../context/CartContext"
 import { useAuth } from "../context/AuthContext"
