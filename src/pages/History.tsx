@@ -1,13 +1,23 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useAuth } from "../context/AuthContext"
 import { Package, Calendar, ArrowLeft } from "lucide-react"
 
 export default function History() {
   const { user, purchases } = useAuth()
+  const [mounted, setMounted] = useState(false)
+
+  // Esperar a que el componente esté montado en el cliente
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleExportPDF = (purchase: (typeof purchases)[0]) => {
+    // Verificar que estamos en el navegador
+    if (typeof window === 'undefined') return
+    
     const printWindow = window.open("", "_blank")
     if (!printWindow) return
 
@@ -65,6 +75,19 @@ export default function History() {
     printWindow.document.write(html)
     printWindow.document.close()
     printWindow.print()
+  }
+
+  // Mostrar un loader mientras se monta el componente
+  if (!mounted) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-16 text-center">
+        <div className="animate-pulse">
+          <div className="h-16 w-16 bg-muted rounded-full mx-auto mb-4"></div>
+          <div className="h-8 bg-muted rounded w-64 mx-auto mb-2"></div>
+          <div className="h-4 bg-muted rounded w-48 mx-auto"></div>
+        </div>
+      </div>
+    )
   }
 
   if (!user) {
