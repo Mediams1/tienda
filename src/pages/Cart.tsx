@@ -1,22 +1,27 @@
 "use client"
 
-import Link from "next/link"  // ← Cambio aquí
+import Link from "next/link"
 import { useCart } from "../context/CartContext"
 import { useAuth } from "../context/AuthContext"
 import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, AlertCircle } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 export default function Cart() {
   const { items, removeFromCart, updateQuantity, clearCart, total } = useCart()
   const { user, addPurchase } = useAuth()
   const [showLoginWarning, setShowLoginWarning] = useState(false)
   const [purchaseComplete, setPurchaseComplete] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const [ticketData, setTicketData] = useState<{
     items: typeof items
     total: number
     date: string
     id: string
   } | null>(null)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleCheckout = () => {
     if (!user) {
@@ -49,7 +54,7 @@ export default function Cart() {
   }
 
   const handleExportPDF = () => {
-    if (!ticketData) return
+    if (!ticketData || typeof window === 'undefined') return
 
     const printWindow = window.open("", "_blank")
     if (!printWindow) return
@@ -64,7 +69,7 @@ export default function Cart() {
           .header { text-align: center; border-bottom: 2px dashed #000; padding-bottom: 10px; margin-bottom: 20px; }
           .header h1 { margin: 0; font-size: 24px; }
           .header p { margin: 5px 0; color: #666; }
-          .item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; }
+          .item { display: flex; justify-between; padding: 8px 0; border-bottom: 1px solid #eee; }
           .item-name { font-weight: 500; }
           .item-details { color: #666; font-size: 14px; }
           .total { display: flex; justify-content: space-between; font-size: 18px; font-weight: bold; margin-top: 20px; padding-top: 10px; border-top: 2px dashed #000; }
@@ -106,6 +111,24 @@ export default function Cart() {
     printWindow.document.write(html)
     printWindow.document.close()
     printWindow.print()
+  }
+
+  if (!mounted) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="animate-pulse">
+          <div className="h-8 bg-muted rounded w-48 mb-8"></div>
+          <div className="grid lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 space-y-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="bg-card border border-border rounded-lg p-4 h-32"></div>
+              ))}
+            </div>
+            <div className="bg-card border border-border rounded-lg p-6 h-64"></div>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   if (purchaseComplete && ticketData) {
