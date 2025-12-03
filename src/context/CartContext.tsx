@@ -21,17 +21,25 @@ const CartContext = createContext<CartContextType | undefined>(undefined)
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([])
+  const [mounted, setMounted] = useState(false)
 
+  // Cargar carrito desde localStorage solo en el cliente
   useEffect(() => {
-    const savedCart = localStorage.getItem("cart")
-    if (savedCart) {
-      setItems(JSON.parse(savedCart))
+    setMounted(true)
+    if (typeof window !== 'undefined') {
+      const savedCart = localStorage.getItem("cart")
+      if (savedCart) {
+        setItems(JSON.parse(savedCart))
+      }
     }
   }, [])
 
+  // Guardar carrito en localStorage solo después de montar
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(items))
-  }, [items])
+    if (mounted && typeof window !== 'undefined') {
+      localStorage.setItem("cart", JSON.stringify(items))
+    }
+  }, [items, mounted])
 
   const addToCart = (product: Product, quantity = 1) => {
     setItems((prevItems) => {
@@ -59,6 +67,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const clearCart = () => {
     setItems([])
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem("cart")
+    }
   }
 
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
