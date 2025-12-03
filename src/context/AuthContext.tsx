@@ -40,22 +40,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [purchases, setPurchases] = useState<Purchase[]>([])
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("currentUser")
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser)
-      setUser(parsedUser)
-      loadUserPurchases(parsedUser.id)
+    // Verificar que estamos en el navegador antes de acceder a localStorage
+    if (typeof window !== 'undefined') {
+      const storedUser = localStorage.getItem("currentUser")
+      if (storedUser) {
+        const parsedUser = JSON.parse(storedUser)
+        setUser(parsedUser)
+        loadUserPurchases(parsedUser.id)
+      }
     }
     setIsLoading(false)
   }, [])
 
   const loadUserPurchases = (userId: string) => {
+    if (typeof window === 'undefined') return
+    
     const allPurchases = JSON.parse(localStorage.getItem("purchases") || "[]")
     const userPurchases = allPurchases.filter((p: Purchase) => p.userId === userId)
     setPurchases(userPurchases)
   }
 
   const login = async (email: string, password: string): Promise<boolean> => {
+    if (typeof window === 'undefined') return false
+    
     const users = JSON.parse(localStorage.getItem("users") || "[]")
     const foundUser = users.find(
       (u: { email: string; password: string }) => u.email === email && u.password === password,
@@ -72,6 +79,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const register = async (name: string, email: string, password: string): Promise<boolean> => {
+    if (typeof window === 'undefined') return false
+    
     const users = JSON.parse(localStorage.getItem("users") || "[]")
     const existingUser = users.find((u: { email: string }) => u.email === email)
 
@@ -99,11 +108,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     setUser(null)
     setPurchases([])
-    localStorage.removeItem("currentUser")
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem("currentUser")
+    }
   }
 
   const addPurchase = (purchase: Omit<Purchase, "id" | "userId" | "date">) => {
-    if (!user) return
+    if (!user || typeof window === 'undefined') return
 
     const newPurchase: Purchase = {
       ...purchase,
@@ -115,6 +126,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const allPurchases = JSON.parse(localStorage.getItem("purchases") || "[]")
     allPurchases.push(newPurchase)
     localStorage.setItem("purchases", JSON.stringify(allPurchases))
+
     setPurchases((prev) => [...prev, newPurchase])
   }
 
