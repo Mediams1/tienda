@@ -6,8 +6,11 @@ const nextConfig: NextConfig = {
     unoptimized: true
   },
   distDir: 'out',
-  // Desactiva SSR
   reactStrictMode: true,
+  // Desactiva SSR para todas las páginas
+  experimental: {
+    runtime: undefined,
+  }
 }
 
 export default nextConfig
